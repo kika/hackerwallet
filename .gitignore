@@ -1,0 +1,5 @@
+config.coffee
+client_secret.json
+hackerwallet-token.json
+node_modules/*
+data/*

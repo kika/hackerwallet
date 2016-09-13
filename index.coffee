@@ -112,15 +112,21 @@ get_data = () ->
 # Main entry point
 # Authenticate to Google and run the file/online data fetch and then
 # upload the data to the Google Sheets
+# Each Promise 'then' step gets a state record passed to it:
+#   sheets:       hash of sheet records mapping sheet name to sheet ID
+#   transactions: array of transaction records (see `parse.coffee`)
+#   reqs:         array of outgoing API requests for the next step
 authlib.run_authenticated (auth) ->
   Promise.join(
+    # get the list of sheets in the spreadsheet
     sheetApi.getA( { auth: auth, spreadsheetId: config.spreadsheetId} ),
+    # get financial data
     get_data(),
-    (res, transactions) ->
-      sheets = {}
-      for s in res.sheets
-        sheets[s.properties.title] = id: s.properties.sheetId
-      return sheets: sheets, transactions: transactions, reqs: []
+    (sheets, transactions) ->
+      shs = {}
+      for s in sheets.sheets
+        shs[s.properties.title] = id: s.properties.sheetId
+      return sheets: shs, transactions: transactions, reqs: []
   )
   .then (s) ->
     s.reqs = create_missing_sheets s
@@ -137,6 +143,7 @@ authlib.run_authenticated (auth) ->
       .then (add) ->
         for r in add.replies
           u.info "Sheet #{r.addSheet.properties.title} created"
+          # update sheets table with new IDs
           s.sheets[r.addSheet.properties.title] = id: r.addSheet.properties.sheetId
         s.reqs = []
         return s

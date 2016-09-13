@@ -38,4 +38,9 @@ Installation
 2. Now you need to register your script as an application with Google and authorize it to alter information in Google Sheets:
 	* Perform actions listed in [Step 1](https://developers.google.com/sheets/quickstart/nodejs)
 	* Run the application for the first time `npm run app` and it will ask you to visit some URL at Google and copy the code provided there. 
-	* After you successfully complete these steps they will not be necessary
+	* After you successfully complete these steps they will not be necessary going forward, the credentials and Oauth token are cached locally.
+
+License
+-----------
+MIT
+

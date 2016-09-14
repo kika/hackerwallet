@@ -45,6 +45,12 @@ patterns = [
   ,
     p: /robert's market/i
     c: 'Food'
+  ,
+    p: /theater/i
+    c: 'Entertainment'
+  ,
+    p: /fandango/i
+    c: 'Entertainment'
 ]
 
 module.exports =

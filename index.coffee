@@ -36,6 +36,14 @@ argv     = require 'yargs'
 sheetApi = Promise.promisifyAll goog.sheets('v4').spreadsheets, suffix: 'A'
 valueApi = Promise.promisifyAll goog.sheets('v4').spreadsheets.values, suffix: 'A'
 
+ofx_message = (bankname, msg) ->
+  fn = switch msg.SEVERITY
+    when 'INFO'  then u.info
+    when 'WARN'  then u.warn
+    when 'ERROR' then u.error
+    else u.error
+  fn( "#{bankname} message: " + msg.MESSAGE )
+
 # Create Google API requests to create Sheets
 create_missing_sheets = (s) ->
   newsheets = {}
@@ -80,8 +88,11 @@ _fetch = (bank, dates, cb) ->
     end:   dates.end
     (err, res) ->
       if err
-        cb res
+        cb( res )
       else
+        msg = parse.get_msg( res.body )
+        if msg
+          ofx_message( bank.name, msg )
         cb( null, {transactions: parse.parse( res.body ), name: bank.name} )
   )
 fetch = Promise.promisify _fetch

@@ -7,6 +7,8 @@ ai       = require './ai'
 
 path = [ "OFX.CREDITCARDMSGSRSV1.CCSTMTTRNRS.CCSTMTRS.BANKTRANLIST.STMTTRN",
          "OFX.BANKMSGSRSV1.STMTTRNRS.STMTRS.BANKTRANLIST.STMTTRN" ]
+msgpath = "OFX.SIGNONMSGSRSV1.SONRS.STATUS"
+
 date_re = /(\d{4})(\d{2})(\d{2})/
 
 parsedate = (d) ->
@@ -62,3 +64,14 @@ parse_transactions: (name, transactions, dates, acc) ->
   return acc
 
 ofx_parse: Promise.promisify _ofx_parse
+
+# returns OFX message record
+#   CODE: 'numeric code'
+#   SEVERITY: 'ERROR' or else
+#   MESSAGE:  'text message'
+get_msg: (body) ->
+  msg = opath.get( body, msgpath )
+  if msg
+    msg.MESSAGE ?= ""
+    msg.MESSAGE += " CODE: #{msg.CODE}"
+  return msg

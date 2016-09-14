@@ -56,7 +56,6 @@ create_table_value = (t) ->
   values.push( userEnteredValue: stringValue: t.type )
   values.push( userEnteredValue: numberValue: t.amount )
   values.push( userEnteredValue: stringValue: t.trname )
-  values.push( userEnteredValue: stringValue: t.memo )
   values.push( userEnteredValue: stringValue: t.category ) if t.category
   return values: values
 
@@ -181,6 +180,7 @@ authlib.run_authenticated (auth) ->
       unless s.sheets[t.shname]?.keys[t.id]
         s.sheets[t.shname].rows ?= []
         s.sheets[t.shname].rows.push( create_table_value t )
+        u.info "Adding #{t.name} for #{t.amount} - #{t.trname} to #{t.shname}"
       else
         u.warn "Transaction #{t.id} for #{t.name} amt: #{t.amount} " +
              "already exists"

@@ -42,6 +42,9 @@ patterns = [
   ,
     p: /Doordash/i
     c: 'Doordash'
+  ,
+    p: /robert's market/i
+    c: 'Food'
 ]
 
 module.exports =

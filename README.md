@@ -30,7 +30,7 @@ Some banks do not provide online access to OFX data (or charge an exorbitant fee
 A notable exception is the Synchrony Bank (former GE Money) which provides store cards for many offline and online retailers, including, unfortunately, Amazon. Amazon Store Card is a Synchrony Bank card and if you have such card you have no OFX data access whatsoever. This is Amazon, the company which basically became the synonym for word "online".
 
  How to load transactions from Amazon Store Card
- ------------------------------------------------
+--------------
 
  Log into your Amazon Store Card account on the [Bank website](Synchronycredit.com)
  and navigate to "Current activity". Once you see the list of your current transactions

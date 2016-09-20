@@ -6,6 +6,9 @@ patterns = [
     p: /restaurant/i
     c: 'Dining'
   ,
+    p: /clipper service/i
+    c: 'Commute'
+  ,
     p: /caltrain/i
     c: 'Commute'
   ,
@@ -51,6 +54,12 @@ patterns = [
   ,
     p: /fandango/i
     c: 'Entertainment'
+  ,
+    p: /netflix/i
+    c: 'Entertainment'
+  ,
+    p: /linkedin/i
+    c: 'Services'
 ]
 
 module.exports =

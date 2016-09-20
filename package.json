@@ -11,6 +11,7 @@
   "dependencies": {
     "banking": "https://github.com/kika/banking.js.git#clientuid",
     "bluebird": "^3.4.6",
+    "cheerio": "^0.22.0",
     "coffee-script": "^1.10.0",
     "colors": "^1.1.2",
     "google-auth-library": "^0.9.8",

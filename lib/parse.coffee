@@ -1,6 +1,8 @@
 util     = require 'util'
+crypto   = require 'crypto'
 Promise  = require 'bluebird'
 opath    = require 'object-path'
+jquery   = require 'cheerio'
 Banking  = require 'banking'
 u        = require './utils'
 ai       = require './ai'
@@ -42,6 +44,27 @@ parse_transaction = (name, transaction, dates) ->
              util.inspect( t, depth: null ) )
       null
 
+amazondate = (d) ->
+  d = new Date(Date.parse(d))
+  return d.getFullYear() +
+         ("00" + (d.getMonth() + 1)).slice(-2) +
+         ("00" + d.getDate()).slice(-2)
+
+# creates an idempotent signature of an object
+chksum = (val) ->
+  hash = crypto.createHash('sha1')
+  for k,v of val
+    hash.update( "" + v )
+  return hash.digest('hex')
+
+# Converts Amazon Store Card transaction dumped from HTML to OFX
+amazon2ofx = (at) ->
+  DTPOSTED: amazondate(at.TRANS_DATE)
+  TRNTYPE:  'DEBIT'
+  REFNUM:   at.REF_NUM || chksum( at )
+  TRNAMT:   - (at.TRANS_AMOUNT - 0.0)
+  NAME:     at.TRANS_DESC
+
 # Parse string with OFX data
 _ofx_parse = (data, cb) -> Banking.parse( data, (res) -> cb( null, res ) )
 
@@ -49,6 +72,8 @@ module.exports =
 # retrieve transactions from the body of the response and always return
 # an array
 parse: (body) ->
+  # first test if this is an array already, then it's probably from HTML
+  return body if Array.isArray body
   # try credit card or bank statement, they are mutually exclusive
   # and only one will work
   res = opath.get(body, path[0]) || opath.get(body, path[1])
@@ -64,6 +89,20 @@ parse_transactions: (name, transactions, dates, acc) ->
   return acc
 
 ofx_parse: Promise.promisify _ofx_parse
+
+# Parses HTML saved from Amazon Store Card account
+html_parse: (data) ->
+  $ = jquery.load( data )
+  json = $('#completedBillingActivityJSONArray').val()
+  arr = JSON.parse( json )
+  if arr
+    return Promise.resolve(
+      header: ""
+      body:   arr.map(amazon2ofx)
+      xml:    json # well, not really, but for compatibility with ofx_parse
+    )
+  else
+    return Promise.reject( "No data in HTML file" )
 
 # returns OFX message record
 #   CODE: 'numeric code'

@@ -67,14 +67,18 @@ create_table_value = (t) ->
   values.push( userEnteredValue: stringValue: t.category ) if t.category
   return values: values
 
-# Read OFX file (usually called Web Connect or something) and return 
+# Read OFX file (usually called Web Connect or something) 
+# or HTML file from Amazon Store card account and return 
 # the array with transactions
 read_data = (name, file, dates) ->
   u.info "Reading data from #{file} for #{name} between " +
          "#{dates.start} and #{dates.end}"
   fs.readFileA( file, 'utf8' )
   .then (data) ->
-    return parse.ofx_parse( data )
+    if /\.html?$/.test file
+      return parse.html_parse( data )
+    else
+      return parse.ofx_parse( data )
   .then (parsed) ->
     return name: name, transactions: parse.parse( parsed.body )
   .then (bank) ->
@@ -90,6 +94,7 @@ _fetch = (bank, dates, cb) ->
       if err
         cb( res )
       else
+        #console.dir( res.body, depth: null ) if bank.name == 'Chase'
         msg = parse.get_msg( res.body )
         if msg
           ofx_message( bank.name, msg )

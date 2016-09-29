@@ -60,6 +60,9 @@ patterns = [
   ,
     p: /linkedin/i
     c: 'Services'
+  ,
+    p: /pharmacy/i
+    c: 'Pharmacy'
 ]
 
 module.exports =

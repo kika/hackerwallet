@@ -182,8 +182,9 @@ authlib.run_authenticated (auth) ->
       # Build lookup tables of already existing transaction IDs
       for v in res.valueRanges
         sheet = eval( v.range.split('!')[0] )
+        vals = if v.values then v.values[0] else []
         s.sheets[sheet].keys =
-          v.values[0].reduce(
+          vals.reduce(
             (acc, i) ->
               acc[i] = true
               return acc
